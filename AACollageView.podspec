@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
                    If you are looking for some way to organize photos in collage, AACollageView is right for you. It uses simple enough recursive algorithm to build an optimal structure of images
                    DESC
 
-  s.homepage     = "https://github.com/Azat92/AACollageView"
+  s.homepage     = "https://github.com/mishingena/AACollageView"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -72,7 +72,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/Azat92/AACollageView.git", :tag => "1.0.1" }
+  s.source       = { :git => "https://github.com/mishingena/AACollageView.git", :tag => "1.0.1" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
