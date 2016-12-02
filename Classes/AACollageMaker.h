@@ -7,15 +7,24 @@
 //
 
 #import <Foundation/Foundation.h>
+#define kMaxImagesInCollage 10 //5
+#define kMinImagesInCollection 3
 
 @interface AACollageMaker : NSObject
 
-+ (CGSize)resultSizeForViewsWithSizes:(NSArray *)sizes
-                      widthConstraint:(CGFloat)widthConstraint
-                     heightConstraint:(CGFloat)heightConstraint;
+// returns @[ CGSize, NSInteger, CGFloat ]
++ (NSArray *)resultSizeForViewsWithSizes:(NSArray *)sizes
+                         widthConstraint:(CGFloat)widthConstraint
+                        heightConstraint:(CGFloat)heightConstraint
+                            imagesMargin:(CGFloat)imagesMargin;
 
 + (NSArray *)rectsForViewsWithSizes:(NSArray *)sizes
                     widthConstraint:(CGFloat)widthConstraint
                    heightConstraint:(CGFloat)heightConstraint;
+
++ (NSArray *)rectsForViewsWithSizes:(NSArray *)sizes
+                    widthConstraint:(CGFloat)widthConstraint
+                   heightConstraint:(CGFloat)heightConstraint
+                          totalSize:(NSValue **)totalSize;
 
 @end

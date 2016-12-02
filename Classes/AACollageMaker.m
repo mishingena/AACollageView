@@ -44,6 +44,9 @@ typedef enum : NSUInteger {
 + (AACollageMakerContainer *)resultContainerForViewsWithSizes:(NSArray *)sizes
                                               widthConstraint:(CGFloat)widthConstraint
                                              heightConstraint:(CGFloat)heightConstraint {
+    if (isnan(heightConstraint) && sizes.count >= kMaxImagesInCollage + kMinImagesInCollection)
+        sizes = [sizes subarrayWithRange:NSMakeRange(0, kMaxImagesInCollage)];
+    
     __block NSInteger index = 0;
     NSMutableArray *containers = [[sizes bk_map:^id(NSValue *obj) {
         CGSize size = obj.CGSizeValue;
@@ -57,16 +60,50 @@ typedef enum : NSUInteger {
     return [self layoutFitContainers:containers widthConstraint:widthConstraint heightConstraint:heightConstraint];
 }
 
-+ (CGSize)resultSizeForViewsWithSizes:(NSArray *)sizes
-                      widthConstraint:(CGFloat)widthConstraint
-                     heightConstraint:(CGFloat)heightConstraint {
++ (NSArray *)resultSizeForViewsWithSizes:(NSArray *)sizes
+                         widthConstraint:(CGFloat)widthConstraint
+                        heightConstraint:(CGFloat)heightConstraint
+                            imagesMargin:(CGFloat)imagesMargin {
+    if (sizes.count == 0)
+        return @[ [NSValue valueWithCGSize:CGSizeZero], @0, @0 ];
+
     AACollageMakerContainer *resizedContainers = [self resultContainerForViewsWithSizes:sizes widthConstraint:widthConstraint heightConstraint:heightConstraint];
-    return resizedContainers.size;
+    
+    NSInteger collectionViewItemCount = 0;
+    CGFloat collectionViewHeight = 0;
+    if (isnan(heightConstraint) && sizes.count >= kMaxImagesInCollage + kMinImagesInCollection) {
+        //we need add collection view
+        NSInteger collageCount = kMaxImagesInCollage;
+        collectionViewItemCount = sizes.count - collageCount;
+     
+        //by convention this happens only if we have widthConstraint
+        collectionViewHeight = 80;
+        CGFloat width = imagesMargin;
+        for (NSInteger i = collageCount; i < sizes.count && width < widthConstraint; i++) {
+            CGSize realSize = [sizes[i] CGSizeValue];
+            CGFloat scale = realSize.height / collectionViewHeight;
+            width += realSize.width / scale + imagesMargin;
+        }
+        if (width < widthConstraint) {
+            CGFloat rawWidth = width - (sizes.count - collageCount + 1) * imagesMargin;
+            CGFloat scale = (widthConstraint - (sizes.count - collageCount + 1) * imagesMargin) / rawWidth;
+            collectionViewHeight *= scale;
+        }
+    }    
+    
+    return @[ [NSValue valueWithCGSize:resizedContainers.size], @(collectionViewItemCount), @(collectionViewHeight) ];
 }
 
 + (NSArray *)rectsForViewsWithSizes:(NSArray *)sizes
                     widthConstraint:(CGFloat)widthConstraint
-                   heightConstraint:(CGFloat)heightConstraint {
+                   heightConstraint:(CGFloat)heightConstraint
+                          totalSize:(NSValue **)totalSize {
+    if (sizes.count == 0) {
+        if (totalSize)
+            *totalSize = [NSValue valueWithCGSize:CGSizeZero];
+        return nil;
+    }
+    
     AACollageMakerContainer *resizedContainers = [self resultContainerForViewsWithSizes:sizes widthConstraint:widthConstraint heightConstraint:heightConstraint];
     NSMutableArray *frames = [NSMutableArray new];
     NSMutableArray *stack = [NSMutableArray new];
@@ -87,9 +124,18 @@ typedef enum : NSUInteger {
         }
     }
     NSArray *outputArray = [[frames filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"inputOrder != nil"]] sortedArrayUsingDescriptors:@[ [NSSortDescriptor sortDescriptorWithKey:@"inputOrder" ascending:YES] ]];
+    
+    if (totalSize)
+        *totalSize = [NSValue valueWithCGSize:resizedContainers.size];
     return [outputArray bk_map:^id(AACollageMakerContainer *obj) {
         return [NSValue valueWithCGRect:CGRectMake(obj.origin.x, obj.origin.y, obj.size.width, obj.size.height)];
     }];
+}
+
++ (NSArray *)rectsForViewsWithSizes:(NSArray *)sizes
+                    widthConstraint:(CGFloat)widthConstraint
+                   heightConstraint:(CGFloat)heightConstraint {
+    return [self rectsForViewsWithSizes:sizes widthConstraint:widthConstraint heightConstraint:heightConstraint totalSize:nil];
 }
 
 + (AACollageMakerContainer *)layoutFitContainers:(NSMutableArray *)containers
@@ -154,7 +200,7 @@ typedef enum : NSUInteger {
 
 + (AACollageMakerContainer *)layoutScaleContainer:(AACollageMakerContainer *)container withSize:(CGSize)dimensions {
     CGSize dimensions1, dimensions2;
-    NSAssert(dimensions.width > 1 || dimensions.height > 1, @"Neccessary for proper work");
+//    NSAssert(dimensions.width > 1 || dimensions.height > 1, @"Neccessary for proper work");
     
     // If it is an image - just resize it (change dimensions).
     if (container.type == AACollageMakerContainerTypeObject) {

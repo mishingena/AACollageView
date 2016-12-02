@@ -30,14 +30,18 @@
  * @brief Tells the delegate a URL for image at the specified index
  * @param collageView collage view to populate
  * @param index index of image in collage view
+ * @param imageSize actual size of image in that place
  */
-- (NSURL *)collageView:(AACollageView *)collageView URLForImageAtIndex:(NSUInteger)index;
+- (NSURL *)collageView:(AACollageView *)collageView URLForImageAtIndex:(NSUInteger)index withSize:(CGSize)imageSize;
 /**
  * @brief Tells the delegate actual size for image at the specified index
  * @param collageView collage view to populate
  * @param index index of image in collage view
  */
 - (CGSize)collageView:(AACollageView *)collageView sizeForImageAtIndex:(NSUInteger)index;
+
+- (NSArray *)imageSizesArrayForCollageview:(AACollageView *)collageView;
+- (NSArray *)imageURLsArrayForCollageView:(AACollageView *)collageView;
 /**
  * @brief Tells the delegate that user tapped some particular image
  * @param collageView sender collage view
@@ -66,6 +70,15 @@
                                    height:(CGFloat)heightConstraint
                                   orWidth:(CGFloat)widthConstraint
                            refreshCollage:(BOOL)needRefresh;
+
+- (void)setupCollageWithFrames:(NSArray *)imageFrames
+                        margin:(CGFloat)imagesMargin
+                refreshCollage:(BOOL)needRefresh;
+
++ (NSArray *)calculatedFramesForImageSizes:(NSArray *)sizes
+                           widthConstraint:(CGFloat)widthConstraint
+                          heightConstraint:(CGFloat)heightConstraint
+                               totalHeight:(NSNumber **)height;
 
 /**
  * @brief Refreshes collage at the screen. You should call this method only after setuping a constraints
