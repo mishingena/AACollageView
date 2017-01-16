@@ -27,7 +27,7 @@
 		AAC9292D1AA73A6B009034F5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC9292C1AA73A6B009034F5 /* Images.xcassets */; };
 		AAC929301AA73A6B009034F5 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAC9292E1AA73A6B009034F5 /* LaunchScreen.xib */; };
 		AAC9293C1AA73A6B009034F5 /* AACollageViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC9293B1AA73A6B009034F5 /* AACollageViewTests.m */; };
-		AAC9294A1AA73BA0009034F5 /* AACollageMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC929471AA73BA0009034F5 /* AACollageMaker.m */; };
+		AAC9294A1AA73BA0009034F5 /* AACollageMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC929471AA73BA0009034F5 /* AACollageMaker.m */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		AAC9294B1AA73BA0009034F5 /* AACollageView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC929491AA73BA0009034F5 /* AACollageView.m */; };
 /* End PBXBuildFile section */
 
